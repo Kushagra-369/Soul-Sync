@@ -4,7 +4,7 @@ import { APIURL } from "../../GlobalAPIURL";
 interface AuthContextType {
   user: any;
   loading: boolean;
-  login: (data: any) => void;
+  login: (userData: any, token: string) => void;
   logout: () => void;
 }
 
@@ -15,31 +15,40 @@ export const AuthProvider = ({ children }: any) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const deviceId = localStorage.getItem("deviceId");
+    const token = localStorage.getItem("token");
 
-    if (!deviceId) {
+    if (!token) {
       setLoading(false);
       return;
     }
 
-    fetch(`${APIURL}/me/${deviceId}`)
+    fetch(`${APIURL}/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then(res => res.json())
       .then(data => {
         if (data.success) {
           setUser(data.user);
+        } else {
+          localStorage.removeItem("token");
         }
       })
-      .catch(() => { })
+      .catch(() => {
+        localStorage.removeItem("token");
+      })
       .finally(() => setLoading(false));
 
   }, []);
 
-  const login = (data: any) => {
-    setUser(data);
+  const login = (userData: any, token: string) => {
+    localStorage.setItem("token", token);
+    setUser(userData);
   };
 
   const logout = () => {
-    localStorage.removeItem("deviceId");
+    localStorage.removeItem("token");
     setUser(null);
   };
 

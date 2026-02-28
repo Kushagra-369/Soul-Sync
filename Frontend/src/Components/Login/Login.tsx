@@ -1,22 +1,29 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { APIURL } from "../../GlobalAPIURL";
-import { useAuth } from "../Context/AuthContext";
+
 type Level = "school" | "college" | "";
 type Assistant = "boy" | "girl" | "";
 
 export default function Login() {
     const navigate = useNavigate();
 
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const [level, setLevel] = useState<Level>("");
     const [selection, setSelection] = useState("");
     const [assistant, setAssistant] = useState<Assistant>("");
     const [loading, setLoading] = useState(false);
-    const { login } = useAuth();
-    const classes = ["6th", "7th", "8th", "9th", "10th", "11th", "12th"];
+
+    const classes = ["6", "7", "8", "9", "10", "11", "12"];
     const courses = ["B.Tech", "BBA", "BCA", "BA", "BSc", "MBA", "MCA"];
 
-    const handleLogin = async () => {
+    const handleCreate = async () => {
+        if (!email || !password || !level || !selection || !assistant) {
+            alert("All fields required");
+            return;
+        }
+
         try {
             setLoading(true);
 
@@ -27,138 +34,139 @@ export default function Login() {
                 localStorage.setItem("deviceId", deviceId);
             }
 
-            const res = await fetch(`${APIURL}/login`, {
+            const res = await fetch(`${APIURL}/create`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
+                    email,
+                    password,
                     level,
                     classOrCourse: selection,
                     assistantType: assistant,
-                    deviceId,
+                    deviceId, // ✅ THIS WAS MISSING
                 }),
             });
 
             const data = await res.json();
 
             if (data.success) {
-                login(data.user);
-                navigate("/");
+                navigate("/otp", { state: { email } });
             } else {
                 alert(data.message);
             }
 
         } catch (error) {
-            console.error("Login error:", error);
+            console.error(error);
             alert("Server error");
         } finally {
             setLoading(false);
         }
     };
-    return (
-        <div className="h-[calc(100vh-80px)] flex items-center justify-center px-4 overflow-hidden">
-            <div className="w-full max-w-xl bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-8 space-y-8 transition-all duration-500">
 
-                <h1 className="text-3xl font-bold text-center bg-linear-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">
-                    Welcome to SoulSync 💙
+    return (
+        <div className="h-[calc(100vh-80px)] text-white flex items-center justify-center overflow-hidden px-3 bg-linear-to-br from-blue-50 via-cyan-50 to-emerald-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+
+            <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-5 space-y-4">
+
+                <h1 className="text-xl font-bold text-center bg-linear-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">
+                    SoulSync 💙
                 </h1>
 
-                {/* Step 1 */}
-                <div>
-                    <h2 className="font-semibold mb-3 text-gray-700 dark:text-gray-300">
-                        Select Your Level
-                    </h2>
-                    <div className="grid grid-cols-2 gap-4">
-                        <button
-                            onClick={() => { setLevel("school"); setSelection(""); }}
-                            className={`p-4 rounded-xl border ${level === "school"
-                                ? "bg-blue-600 text-white"
-                                : "bg-gray-100 dark:bg-gray-700"
-                                }`}
-                        >
-                            🏫 School
-                        </button>
+                {/* Email */}
+                <input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full p-2 rounded-lg text-sm border bg-gray-100 dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 outline-none"
+                />
 
+                {/* Password */}
+                <input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full p-2 rounded-lg text-sm border bg-gray-100 dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+
+                {/* Level */}
+                <div className="grid grid-cols-2 gap-2">
+                    {["school", "college"].map((item) => (
                         <button
-                            onClick={() => { setLevel("college"); setSelection(""); }}
-                            className={`p-4 rounded-xl border ${level === "college"
-                                ? "bg-blue-600 text-white"
-                                : "bg-gray-100 dark:bg-gray-700"
+                            key={item}
+                            onClick={() => { setLevel(item as Level); setSelection(""); }}
+                            className={`p-2 rounded-lg text-sm ${level === item
+                                    ? "bg-blue-600 text-white"
+                                    : "bg-gray-100 dark:bg-gray-700"
                                 }`}
                         >
-                            🎓 College
+                            {item === "school" ? "🏫" : "🎓"} {item}
                         </button>
-                    </div>
+                    ))}
                 </div>
 
-                {/* Step 2 */}
+                {/* Class/Course */}
                 {level && (
-                    <div>
-                        <h2 className="font-semibold mb-3 text-gray-700 dark:text-gray-300">
-                            {level === "school" ? "Choose Your Class" : "Choose Your Course"}
-                        </h2>
-
-                        <div className="grid grid-cols-3 gap-3">
-                            {(level === "school" ? classes : courses).map((item) => (
-                                <button
-                                    key={item}
-                                    onClick={() => setSelection(item)}
-                                    className={`p-3 rounded-lg text-sm border ${selection === item
+                    <div className="grid grid-cols-4 gap-1">
+                        {(level === "school" ? classes : courses).map((item) => (
+                            <button
+                                key={item}
+                                onClick={() => setSelection(item)}
+                                className={`p-1.5 text-xs rounded-md ${selection === item
                                         ? "bg-emerald-600 text-white"
                                         : "bg-gray-100 dark:bg-gray-700"
-                                        }`}
-                                >
-                                    {item}
-                                </button>
-                            ))}
-                        </div>
+                                    }`}
+                            >
+                                {item}
+                            </button>
+                        ))}
                     </div>
                 )}
 
-                {/* Step 3 */}
+                {/* Assistant */}
                 {selection && (
-                    <div>
-                        <h2 className="font-semibold mb-3 text-gray-700 dark:text-gray-300">
-                            Choose Your AI Assistant
-                        </h2>
-
-                        <div className="grid grid-cols-2 gap-6">
+                    <div className="grid grid-cols-2 gap-2">
+                        {["boy", "girl"].map((type) => (
                             <button
-                                onClick={() => setAssistant("boy")}
-                                className={`p-6 rounded-2xl text-4xl ${assistant === "boy"
-                                    ? "bg-blue-600 text-white scale-105"
-                                    : "bg-gray-100 dark:bg-gray-700"
+                                key={type}
+                                onClick={() => setAssistant(type as Assistant)}
+                                className={`p-3 text-2xl rounded-xl ${assistant === type
+                                        ? type === "boy"
+                                            ? "bg-blue-600 text-white"
+                                            : "bg-pink-600 text-white"
+                                        : "bg-gray-100 dark:bg-gray-700"
                                     }`}
                             >
-                                👨🏻‍💻
-                                <p className="text-sm mt-2">Acetone</p>
+                                {type === "boy" ? "👨🏻‍💻" : "👩🏻‍💻"}
                             </button>
-
-                            <button
-                                onClick={() => setAssistant("girl")}
-                                className={`p-6 rounded-2xl text-4xl ${assistant === "girl"
-                                    ? "bg-pink-600 text-white scale-105"
-                                    : "bg-gray-100 dark:bg-gray-700"
-                                    }`}
-                            >
-                                👩🏻‍💻
-                                <p className="text-sm mt-2">Aura</p>
-                            </button>
-                        </div>
+                        ))}
                     </div>
                 )}
 
-                {/* Final Button */}
+                {/* Continue */}
                 {assistant && (
                     <button
-                        onClick={handleLogin}
+                        onClick={handleCreate}
                         disabled={loading}
-                        className="w-full py-4 rounded-2xl bg-linear-to-r from-blue-600 to-emerald-600 text-white font-semibold text-lg hover:scale-[1.02] transition-all duration-300 shadow-lg"
+                        className="w-full py-2 rounded-xl text-sm bg-linear-to-r from-blue-600 to-emerald-600 text-white font-medium disabled:opacity-50"
                     >
-                        {loading ? "Loading..." : "Continue →"}
+                        {loading ? "Please wait..." : "Continue →"}
                     </button>
                 )}
+
+                <div className="text-center text-xs text-gray-500 dark:text-gray-400">
+                    Already registered?{" "}
+                    <span
+                        onClick={() => navigate("/login")}
+                        className="text-blue-600 cursor-pointer"
+                    >
+                        Login
+                    </span>
+                </div>
+
             </div>
         </div>
     );

@@ -11,6 +11,20 @@ const userSchema: Schema = new Schema(
             trim: true,
         },
 
+        email: {
+            type: String,
+            required: true,
+            unique: true,
+            lowercase: true,
+            trim: true,
+        },
+
+        password: {
+            type: String,
+            required: true,
+            minlength: 6,
+        },
+
         level: {
             type: String,
             enum: ["school", "college"],
@@ -28,19 +42,26 @@ const userSchema: Schema = new Schema(
             required: true,
         },
 
-        createdAt: {
+        mood: {
             type: String,
-            default: () => new Date().toISOString(),
+            enum: ["very_bad", "bad", "normal", "good", "excited"],
+            default: "normal",
         },
+
         deviceId: {
             type: String,
             required: true,
             unique: true,
         },
+        validation: {
+            isEmailVerified: { type: Boolean, default: false },
+            otp: { type: String },
+            otpExpiry: { type: Date },   // ✅ CHANGE THIS
+            isDelete: { type: Boolean, default: false },
+        }
     },
-
     {
-        timestamps: true, // createdAt & updatedAt auto add karega
+        timestamps: true, // createdAt & updatedAt auto handle karega
     }
 );
 

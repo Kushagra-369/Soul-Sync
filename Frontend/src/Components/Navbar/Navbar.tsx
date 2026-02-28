@@ -2,7 +2,10 @@ import { useState, useEffect } from "react";
 import { Menu, X, Heart, Sparkles, Home, Users, BookOpen, Info, Moon, Sun } from "lucide-react";
 import { useTheme } from "../../Context/ThemeContext";
 
-export default function Navbar() {
+interface NavbarProps {
+  onMoodClick: () => void;
+}
+export default function Navbar({ onMoodClick }: NavbarProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [scrolled, setScrolled] = useState<boolean>(false);
   const { toggleTheme, isDark } = useTheme();
@@ -36,75 +39,74 @@ export default function Navbar() {
   }
 
   const navLinks: NavLink[] = [
-    { 
-      href: "/", 
-      icon: Home, 
-      label: "Home", 
+    {
+      href: "/",
+      icon: Home,
+      label: "Home",
       gradient: "from-blue-500 to-cyan-500",
-      darkGradient: "dark:from-blue-400 dark:to-cyan-400" 
+      darkGradient: "dark:from-blue-400 dark:to-cyan-400"
     },
-    { 
-      href: "/wellness", 
-      icon: Heart, 
-      label: "Wellness", 
+    {
+      href: "/wellness",
+      icon: Heart,
+      label: "Wellness",
       gradient: "from-emerald-500 to-teal-500",
-      darkGradient: "dark:from-emerald-400 dark:to-teal-400" 
+      darkGradient: "dark:from-emerald-400 dark:to-teal-400"
     },
-    { 
-      href: "/community", 
-      icon: Users, 
-      label: "Community", 
+    {
+      href: "/community",
+      icon: Users,
+      label: "Community",
       gradient: "from-cyan-500 to-blue-500",
-      darkGradient: "dark:from-cyan-400 dark:to-blue-400" 
+      darkGradient: "dark:from-cyan-400 dark:to-blue-400"
     },
-    { 
-      href: "/connect", 
-      icon: Info, 
-      label: "Connect", 
+    {
+      href: "/connect",
+      icon: Info,
+      label: "Connect",
       gradient: "from-teal-500 to-emerald-500",
-      darkGradient: "dark:from-teal-400 dark:to-emerald-400" 
+      darkGradient: "dark:from-teal-400 dark:to-emerald-400"
     },
   ];
 
   const mobileLinks: NavLink[] = [
-    { 
-      href: "/", 
-      icon: Home, 
-      label: "Home", 
+    {
+      href: "/",
+      icon: Home,
+      label: "Home",
       gradient: "from-blue-500 to-cyan-500",
-      darkGradient: "dark:from-blue-400 dark:to-cyan-400" 
+      darkGradient: "dark:from-blue-400 dark:to-cyan-400"
     },
-    { 
-      href: "/wellness", 
-      icon: Heart, 
-      label: "Wellness", 
+    {
+      href: "/wellness",
+      icon: Heart,
+      label: "Wellness",
       gradient: "from-emerald-500 to-teal-500",
-      darkGradient: "dark:from-emerald-400 dark:to-teal-400" 
+      darkGradient: "dark:from-emerald-400 dark:to-teal-400"
     },
-    { 
-      href: "/community", 
-      icon: Users, 
-      label: "Community", 
+    {
+      href: "/community",
+      icon: Users,
+      label: "Community",
       gradient: "from-teal-500 to-emerald-500",
-      darkGradient: "dark:from-teal-400 dark:to-emerald-400" 
+      darkGradient: "dark:from-teal-400 dark:to-emerald-400"
     },
-    { 
-      href: "/connect", 
-      icon: Info, 
-      label: "Connect", 
+    {
+      href: "/connect",
+      icon: Info,
+      label: "Connect",
       gradient: "from-blue-400 to-cyan-400",
-      darkGradient: "dark:from-blue-300 dark:to-cyan-300" 
+      darkGradient: "dark:from-blue-300 dark:to-cyan-300"
     },
   ];
 
   return (
-    <nav className={`w-full fixed top-0 left-0 z-50 transition-all duration-500 ${
-      scrolled
-        ? "bg-white/90 backdrop-blur-md shadow-lg border-b border-blue-100/50 dark:bg-gray-900/90 dark:border-gray-800/50"
-        : "bg-linear-to-r from-blue-50/90 via-cyan-50/90 to-emerald-50/90 backdrop-blur-sm dark:from-gray-900/90 dark:via-gray-800/90 dark:to-gray-900/90"
-    }`}>
+    <nav className={`w-full fixed top-0 left-0 z-50 transition-all duration-500 ${scrolled
+      ? "bg-white/90 backdrop-blur-md shadow-lg border-b border-blue-100/50 dark:bg-gray-900/90 dark:border-gray-800/50"
+      : "bg-linear-to-r from-blue-50/90 via-cyan-50/90 to-emerald-50/90 backdrop-blur-sm dark:from-gray-900/90 dark:via-gray-800/90 dark:to-gray-900/90"
+      }`}>
 
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
         <div className="flex items-center justify-between h-16 sm:h-20">
 
@@ -150,10 +152,12 @@ export default function Navbar() {
               </button>
 
               {/* Daily Submit Button */}
-              <button className="relative group px-5 py-2.5 rounded-full bg-linear-to-r from-blue-600 to-emerald-600 text-white hover:shadow-xl hover:shadow-blue-200 transition-all duration-300 hover:scale-105 dark:from-blue-500 dark:to-emerald-500 dark:hover:shadow-blue-900/30">
+              <button
+                onClick={onMoodClick}
+                className="relative group px-5 py-2.5 rounded-full bg-linear-to-r from-blue-600 to-emerald-600 text-white hover:shadow-xl hover:shadow-blue-200 transition-all duration-300 hover:scale-105 dark:from-blue-500 dark:to-emerald-500 dark:hover:shadow-blue-900/30">
                 <span className="relative flex items-center gap-2">
                   <Sparkles className="w-4 h-4 animate-pulse" />
-                  <span className="font-medium">Daily Submit</span>
+                  <span className="font-medium">Daily Mood</span>
                 </span>
                 <div className="absolute inset-0 rounded-full bg-linear-to-r from-cyan-500 to-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-md -z-10 dark:from-cyan-400 dark:to-emerald-400" />
               </button>
@@ -211,8 +215,8 @@ export default function Navbar() {
               aria-label="Toggle menu"
             >
               <div className={`transition-transform duration-300 ${open ? 'rotate-90' : ''}`}>
-                {open ? 
-                  <X size={24} className="text-blue-600 dark:text-blue-400" /> : 
+                {open ?
+                  <X size={24} className="text-blue-600 dark:text-blue-400" /> :
                   <Menu size={24} className="text-blue-600 dark:text-blue-400" />
                 }
               </div>
@@ -258,8 +262,8 @@ export default function Navbar() {
               aria-label="Toggle menu"
             >
               <div className={`transition-transform duration-300 ${open ? 'rotate-90' : ''}`}>
-                {open ? 
-                  <X size={24} className="text-blue-600 dark:text-blue-400" /> : 
+                {open ?
+                  <X size={24} className="text-blue-600 dark:text-blue-400" /> :
                   <Menu size={24} className="text-blue-600 dark:text-blue-400" />
                 }
               </div>
@@ -285,8 +289,8 @@ export default function Navbar() {
               aria-label="Toggle menu"
             >
               <div className={`transition-transform duration-300 ${open ? 'rotate-90' : ''}`}>
-                {open ? 
-                  <X size={24} className="text-blue-600 dark:text-blue-400" /> : 
+                {open ?
+                  <X size={24} className="text-blue-600 dark:text-blue-400" /> :
                   <Menu size={24} className="text-blue-600 dark:text-blue-400" />
                 }
               </div>
@@ -296,9 +300,8 @@ export default function Navbar() {
       </div>
 
       {/* Menu for Tablet and Medium Screens (768px to 1439px) */}
-      <div className={`hidden md:block xl:hidden transition-all duration-500 ease-in-out overflow-hidden ${
-        open ? "max-h-150 opacity-100 visible" : "max-h-0 opacity-0 invisible"
-      }`}>
+      <div className={`hidden md:block xl:hidden transition-all duration-500 ease-in-out overflow-hidden ${open ? "max-h-150 opacity-100 visible" : "max-h-0 opacity-0 invisible"
+        }`}>
         <div className="bg-linear-to-b from-white to-blue-50/30 backdrop-blur-lg border-t border-blue-100/50 shadow-xl dark:from-gray-900 dark:to-gray-800/30 dark:border-gray-800/50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="py-6 grid grid-cols-2 gap-4">
@@ -334,9 +337,8 @@ export default function Navbar() {
       </div>
 
       {/* Mobile Menu for Small Screens ( <= 767px ) */}
-      <div className={`md:hidden transition-all duration-500 ease-in-out overflow-hidden ${
-        open ? "max-h-150 opacity-100 visible" : "max-h-0 opacity-0 invisible"
-      }`}>
+      <div className={`md:hidden transition-all duration-500 ease-in-out overflow-hidden ${open ? "max-h-150 opacity-100 visible" : "max-h-0 opacity-0 invisible"
+        }`}>
         <div className="bg-linear-to-b from-white to-blue-50/30 backdrop-blur-lg border-t border-blue-100/50 shadow-xl dark:from-gray-900 dark:to-gray-800/30 dark:border-gray-800/50">
           <div className="px-4 py-6 space-y-3">
             {mobileLinks.map((item, index) => (
