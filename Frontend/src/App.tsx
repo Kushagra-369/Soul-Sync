@@ -7,7 +7,8 @@ import OTP from "./Components/Login/Otp";
 import User_Login from "./Components/Login/User_Login";
 import DailyMood from "./Components/Mood/DailyMood";
 import { useState, useEffect } from "react";
-
+import Connect from "./Components/Connect/Connect";
+import Community from "./Components/Community/Community";
 export default function App() {
   const { user, loading } = useAuth();
   const [showMood, setShowMood] = useState(false);
@@ -53,9 +54,7 @@ export default function App() {
         )}
 
         <Routes>
-          <Route
-            path="/"
-            element={
+          <Route path="/" element={
               user ? (
                 <>
                   <Navbar onMoodClick={() => setShowMood(true)} />
@@ -68,8 +67,22 @@ export default function App() {
               )
             }
           />
+          <Route path="/community" element={
+              user ? (
+                <>
+                  <Navbar onMoodClick={() => setShowMood(true)} />
+                  <div className="pt-20">
+                    <Community />
+                  </div>
+                </>
+              ) : (
+                <Login />
+              )
+            }
+          />
           <Route path="/otp" element={<OTP />} />
           <Route path="/login" element={<User_Login />} />
+          <Route path="/connect" element={<Connect />} />
         </Routes>
       </div>
     </BrowserRouter>
