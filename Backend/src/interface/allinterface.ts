@@ -1,3 +1,5 @@
+import { Document, Types } from "mongoose";
+
 export type Level = "school" | "college";
 
 export type AssistantType = "boy" | "girl";
@@ -26,4 +28,11 @@ export interface IUser {
         otpExpiry?: Date;   // ✅ CHANGE THIS
         isDelete: boolean;
     };
+}
+
+
+export interface IMood extends Document {
+  user: Types.ObjectId;
+  mood: "very_bad" | "bad" | "average" | "good" | "awesome";
+  date: Date;
 }

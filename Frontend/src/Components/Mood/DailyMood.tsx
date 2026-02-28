@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { X } from "lucide-react";
+import axios from "axios";
+import { APIURL } from "../../GlobalAPIURL";
 
 interface Props {
   open: boolean;
@@ -8,6 +10,7 @@ interface Props {
 
 export default function DailyMood({ open, onClose }: Props) {
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   if (!open) return null;
 
@@ -19,13 +22,31 @@ export default function DailyMood({ open, onClose }: Props) {
     { label: "Awesome", value: "awesome", emoji: "🤩" },
   ];
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!selectedMood) return;
 
-    const today = new Date().toDateString();
-    localStorage.setItem("dailyMoodDate", today);
+    try {
+      setLoading(true);
 
-    onClose();
+      const token = localStorage.getItem("token"); // 👈 token yaha se
+
+      await axios.post(
+        `${APIURL}/mood`,
+        { mood: selectedMood },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      onClose();
+
+    } catch (error: any) {
+      alert(error.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -62,10 +83,10 @@ export default function DailyMood({ open, onClose }: Props) {
 
         <button
           onClick={handleSubmit}
-          disabled={!selectedMood}
+          disabled={!selectedMood || loading}
           className="mt-6 w-full py-2 rounded-xl bg-linear-to-r from-blue-600 to-emerald-600 text-white disabled:opacity-50"
         >
-          Submit Mood
+          {loading ? "Saving..." : "Submit Mood"}
         </button>
       </div>
     </div>
