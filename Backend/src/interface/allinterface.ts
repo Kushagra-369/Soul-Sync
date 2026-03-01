@@ -45,3 +45,19 @@ export interface ICommunityMessage extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
+
+
+export interface IWellnessExercise {
+  title: string;
+  category: string;
+  content: string;
+  emoji?: string;
+  mood: "very_bad" | "bad" | "average" | "good" | "awesome";
+  order: number;
+}
+
+export interface IUserWellnessProgress {
+  user: mongoose.Types.ObjectId;
+  exercise: mongoose.Types.ObjectId;
+  completedAt: Date;
+}

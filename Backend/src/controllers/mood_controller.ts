@@ -1,12 +1,16 @@
-import { Request, Response } from "express";
-import jwt from "jsonwebtoken";
+import { Response } from "express";
 import { Mood } from "../models/mood_model";
+import { AuthRequest } from "../middleware/auth";
 
-export const saveDailyMood = async (req: Request, res: Response) => {
+export const saveDailyMood = async (
+  req: AuthRequest,
+  res: Response
+) => {
   try {
     const { mood } = req.body;
 
     const allowedMoods = ["very_bad", "bad", "average", "good", "awesome"];
+
     if (!mood || !allowedMoods.includes(mood)) {
       return res.status(400).json({
         success: false,
@@ -14,33 +18,18 @@ export const saveDailyMood = async (req: Request, res: Response) => {
       });
     }
 
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    const userId = req.userId;
+
+    if (!userId) {
       return res.status(401).json({
         success: false,
-        message: "No token provided",
+        message: "Unauthorized",
       });
     }
 
-    const token = authHeader.split(" ")[1];
-
-    let userId: string;
-
-    try {
-      const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
-      userId = decoded.id;
-    } catch {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid or expired token",
-      });
-    }
-
-    // 🔥 Today date
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // ❌ Direct create (findOne ki zarurat nahi)
     const newMood = await Mood.create({
       user: userId,
       mood,
@@ -55,7 +44,6 @@ export const saveDailyMood = async (req: Request, res: Response) => {
 
   } catch (error: any) {
 
-    // 💥 Duplicate Entry Error (11000)
     if (error.code === 11000) {
       return res.status(400).json({
         success: false,
@@ -68,6 +56,71 @@ export const saveDailyMood = async (req: Request, res: Response) => {
     return res.status(500).json({
       success: false,
       message: "Server Error",
+    });
+  }
+};
+
+export const checkTodayMood = async (req: AuthRequest, res: Response) => {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const mood = await Mood.findOne({
+      user: req.userId,
+      date: today,
+    });
+
+    return res.status(200).json({
+      success: true,
+      submitted: !!mood,
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+export const getTodayMood = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  try {
+    const userId = req.userId;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const todayMood = await Mood.findOne({
+      user: userId,
+      date: today,
+    });
+
+    if (!todayMood) {
+      return res.status(404).json({
+        success: false,
+        message: "Mood not submitted",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      mood: todayMood.mood,
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
     });
   }
 };

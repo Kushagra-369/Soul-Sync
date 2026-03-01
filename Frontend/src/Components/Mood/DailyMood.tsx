@@ -12,6 +12,9 @@ export default function DailyMood({ open, onClose }: Props) {
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const token = localStorage.getItem("token");
+
+  // 🚫 Only render if open is true
   if (!open) return null;
 
   const moods = [
@@ -28,8 +31,6 @@ export default function DailyMood({ open, onClose }: Props) {
     try {
       setLoading(true);
 
-      const token = localStorage.getItem("token"); // 👈 token yaha se
-
       await axios.post(
         `${APIURL}/mood`,
         { mood: selectedMood },
@@ -40,6 +41,7 @@ export default function DailyMood({ open, onClose }: Props) {
         }
       );
 
+      // 🔥 Close popup after successful submission
       onClose();
 
     } catch (error: any) {
@@ -55,7 +57,7 @@ export default function DailyMood({ open, onClose }: Props) {
 
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-red-500"
+          className="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition"
         >
           <X size={20} />
         </button>

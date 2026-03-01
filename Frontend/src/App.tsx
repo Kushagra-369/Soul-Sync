@@ -9,20 +9,38 @@ import DailyMood from "./Components/Mood/DailyMood";
 import { useState, useEffect } from "react";
 import Connect from "./Components/Connect/Connect";
 import Community from "./Components/Community/Community";
+import Wellness from "./Components/Wellness/Wellness";
+import { APIURL } from "./GlobalAPIURL";
 export default function App() {
   const { user, loading } = useAuth();
   const [showMood, setShowMood] = useState(false);
 
   // ✅ Auto show once per day when user exists
   useEffect(() => {
-    if (!user) return;
+    const checkMood = async () => {
+      if (!user) return;
 
-    const lastShown = localStorage.getItem("dailyMoodDate");
-    const today = new Date().toDateString();
+      const token = localStorage.getItem("token");
 
-    if (lastShown !== today) {
-      setShowMood(true);
-    }
+      try {
+        const res = await fetch(`${APIURL}/check_mood`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+
+        if (res.ok && !data.submitted) {
+          setShowMood(true);
+        }
+
+      } catch (err) {
+        console.error("Mood check failed");
+      }
+    };
+
+    checkMood();
   }, [user]);
 
   if (loading) {
@@ -55,34 +73,49 @@ export default function App() {
 
         <Routes>
           <Route path="/" element={
-              user ? (
-                <>
-                  <Navbar onMoodClick={() => setShowMood(true)} />
-                  <div className="pt-20">
-                    <Home />
-                  </div>
-                </>
-              ) : (
-                <Login />
-              )
-            }
+            user ? (
+              <>
+                <Navbar onMoodClick={() => setShowMood(true)} />
+                <div className="pt-20">
+                  <Home />
+                </div>
+              </>
+            ) : (
+              <Login />
+            )
+          }
           />
           <Route path="/community" element={
-              user ? (
-                <>
-                  <Navbar onMoodClick={() => setShowMood(true)} />
-                  <div className="pt-20">
-                    <Community />
-                  </div>
-                </>
-              ) : (
-                <Login />
-              )
-            }
+            user ? (
+              <>
+                <Navbar onMoodClick={() => setShowMood(true)} />
+                <div className="pt-20">
+                  <Community />
+                </div>
+              </>
+            ) : (
+              <Login />
+            )
+          }
           />
+          <Route path="/wellness" element={
+            user ? (
+              <>
+                <Navbar onMoodClick={() => setShowMood(true)} />
+                <div className="pt-20">
+                  <Wellness />
+                </div>
+              </>
+            ) : (
+              <Login />
+            )
+          }
+          />
+
           <Route path="/otp" element={<OTP />} />
           <Route path="/login" element={<User_Login />} />
           <Route path="/connect" element={<Connect />} />
+
         </Routes>
       </div>
     </BrowserRouter>
