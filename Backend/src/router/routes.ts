@@ -1,7 +1,7 @@
 import express from "express";
 
 import { user_create , get_me , verify_otp , user_login , get_user_details} from "../controllers/user_controller";
-import { saveDailyMood , checkTodayMood, getTodayMood} from "../controllers/mood_controller";
+import { saveDailyMood , checkTodayMood, getTodayMood , getMoodStats,getMoodsByRange} from "../controllers/mood_controller";
 import { bookSession } from "../controllers/session_controller";
 import {sendMessage ,getAllMessages} from "../controllers/community_controller";
 import { verifyToken } from "../middleware/auth";
@@ -18,6 +18,8 @@ router.get("/user_details/:id", get_user_details);
 router.post("/mood",verifyToken, saveDailyMood);
 router.get("/check_mood", verifyToken, checkTodayMood);
 router.get("/get_mood", verifyToken, getTodayMood);
+router.get("/range", verifyToken, getMoodsByRange);
+router.get("/stats", verifyToken, getMoodStats);
 
 router.post("/session", bookSession);
 
