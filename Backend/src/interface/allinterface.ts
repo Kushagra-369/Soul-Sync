@@ -7,7 +7,6 @@ export interface IUser {
   level: "school" | "college";
   classOrCourse: string;
   assistantType: "boy" | "girl";
-  mood?: "very_bad" | "bad" | "normal" | "good" | "excited";
   deviceId: string;
 
   validation: {
@@ -60,4 +59,20 @@ export interface IUserWellnessProgress {
   user: mongoose.Types.ObjectId;
   exercise: mongoose.Types.ObjectId;
   completedAt: Date;
+}
+
+export interface IMessage {
+  sender: "user" | "ai";
+  text: string;
+  timestamp: Date;
+}
+
+/* ---------------- CHAT DOCUMENT INTERFACE ---------------- */
+
+export interface IChat extends Document {
+  user: Types.ObjectId;   // Reference to User model
+  mood?: string;          // User ka mood at time of chat
+  messages: IMessage[];   // Conversation array
+  createdAt: Date;
+  updatedAt: Date;
 }

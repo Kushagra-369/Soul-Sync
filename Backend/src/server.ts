@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import mongoose from "mongoose";
 import router from "./router/routes";
-
+ 
 dotenv.config();
 
 const app = express();
@@ -19,6 +19,8 @@ if (!mongoURL) {
   process.exit(1);
 }
 
+console.log(mongoURL);
+
 mongoose
   .connect(mongoURL)
   .then(() => console.log("🌐 MongoDB connected"))
@@ -31,7 +33,6 @@ mongoose
 app.get("/", (req, res) => {
   res.send("Server is running");
 });
-
 app.use("/", router);
 
 app.listen(PORT, () => {

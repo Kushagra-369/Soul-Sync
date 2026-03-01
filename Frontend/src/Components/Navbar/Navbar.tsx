@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Menu, X, Heart, Sparkles, Home, Users, BookOpen, Info, Moon, Sun } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useTheme } from "../../Context/ThemeContext";
 
 interface NavbarProps {
@@ -143,13 +144,16 @@ export default function Navbar({ onMoodClick }: NavbarProps) {
             {/* Action Buttons */}
             <div className="flex items-center gap-3">
               {/* Dashboard Button */}
-              <button className="relative group px-5 py-2.5 rounded-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-blue-100 dark:hover:shadow-blue-900/30">
-                <div className="absolute inset-0 bg-linear-to-r from-blue-50 to-emerald-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 dark:from-gray-800 dark:to-gray-700" />
-                <span className="relative flex items-center gap-2 text-gray-600 group-hover:text-blue-600 transition-colors dark:text-gray-300 dark:group-hover:text-blue-400">
-                  <BookOpen className="w-4 h-4" />
-                  <span className="font-medium">Dashboard</span>
-                </span>
-              </button>
+              <Link to="/dashboard">
+                <button className="relative group px-5 py-2.5 rounded-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-blue-100 dark:hover:shadow-blue-900/30">
+                  <div className="absolute inset-0 bg-linear-to-r from-blue-50 to-emerald-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 dark:from-gray-800 dark:to-gray-700" />
+
+                  <span className="relative flex items-center gap-2 text-gray-600 group-hover:text-blue-600 transition-colors dark:text-gray-300 dark:group-hover:text-blue-400">
+                    <BookOpen className="w-4 h-4" />
+                    <span className="font-medium">Dashboard</span>
+                  </span>
+                </button>
+              </Link>
 
               {/* Daily Submit Button */}
               <button

@@ -42,12 +42,6 @@ const userSchema: Schema = new Schema(
       required: true,
     },
 
-    mood: {
-      type: String,
-      enum: ["very_bad", "bad", "normal", "good", "excited"],
-      default: "normal",
-    },
-
     deviceId: {
       type: String,
       required: true,

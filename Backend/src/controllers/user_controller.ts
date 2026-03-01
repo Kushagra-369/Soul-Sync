@@ -78,7 +78,6 @@ export const user_create = async (req: Request, res: Response) => {
       classOrCourse,
       assistantType,
       deviceId: deviceId.trim(),
-      mood: "normal",
       validation: {
         isEmailVerified: false,
         otp,
@@ -177,7 +176,6 @@ export const verify_otp = async (req: Request, res: Response) => {
   }
 };
 
-
 export const user_login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
@@ -247,6 +245,34 @@ export const user_login = async (req: Request, res: Response) => {
     return res.status(500).json({
       success: false,
       message: "Internal server error",
+    });
+  }
+};
+
+export const get_user_details = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const user = await User.findById(id)
+      .select("level classOrCourse assistantType");
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: user,
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
+      error,
     });
   }
 };

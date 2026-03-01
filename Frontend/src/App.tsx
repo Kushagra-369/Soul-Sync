@@ -11,6 +11,8 @@ import Connect from "./Components/Connect/Connect";
 import Community from "./Components/Community/Community";
 import Wellness from "./Components/Wellness/Wellness";
 import { APIURL } from "./GlobalAPIURL";
+import AICounselor from "./Components/AICounceller/AIcounceller";
+import Dashboard from "./Components/Dashboard/Dashboard";
 export default function App() {
   const { user, loading } = useAuth();
   const [showMood, setShowMood] = useState(false);
@@ -72,8 +74,7 @@ export default function App() {
         )}
 
         <Routes>
-          <Route path="/" element={
-            user ? (
+          <Route path="/" element={user ? (
               <>
                 <Navbar onMoodClick={() => setShowMood(true)} />
                 <div className="pt-20">
@@ -111,10 +112,26 @@ export default function App() {
             )
           }
           />
+        
+          <Route path="/ai-counselor" element={
+            user ? (
+              <>
+                <Navbar onMoodClick={() => setShowMood(true)} />
+                <div className="pt-20">
+                  <AICounselor />
+                </div>
+              </>
+            ) : (
+              <Login />
+            )
+          }
+          />
+
 
           <Route path="/otp" element={<OTP />} />
           <Route path="/login" element={<User_Login />} />
           <Route path="/connect" element={<Connect />} />
+          <Route path="/dashboard" element={<Dashboard />}/>
 
         </Routes>
       </div>
